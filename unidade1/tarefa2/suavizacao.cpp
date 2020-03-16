@@ -9,9 +9,9 @@ int main(int argc, char** argv)
   Mat img;
   Mat res;
   Mat mask;
-  float kernel_gaussian[] = {1, 1, 1,
-                             1, 1, 1,
-                             1, 1, 1};
+  float kernel_media[] = {1, 1, 1,
+                          1, 1, 1,
+                          1, 1, 1};
 
   img = imread(argv[1], CV_LOAD_IMAGE_GRAYSCALE);
   if(!img.data)
