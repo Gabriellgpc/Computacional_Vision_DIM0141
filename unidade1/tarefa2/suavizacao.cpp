@@ -20,7 +20,7 @@ int main(int argc, char** argv)
     return -1;
   }
 
-  mask = Mat(3,3, CV_32F, kernel_gaussian)/9.0;
+  mask = Mat(3,3, CV_32F, kernel_media)/9.0;
   //Aplica filtro de suavização, filtro de Media
   filter2D(img, res, -1, mask);
 
