@@ -4,6 +4,7 @@
 #include <opencv2/opencv.hpp>
 using namespace cv;
 
+
 int main(int argc, char**argv)
 {
   String path("./imagensComRuido/*.jpg");
@@ -40,6 +41,7 @@ int main(int argc, char**argv)
 
   imshow("Media", media);
   imwrite("Media.png",media);
+  
 
   waitKey(0);
   return 0;

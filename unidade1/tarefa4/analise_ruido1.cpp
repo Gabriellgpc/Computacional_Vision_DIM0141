@@ -2,6 +2,8 @@
 #include <string>
 #include <cmath>
 
+#define PATH_OUT "saida_analise1"
+
 using namespace cv;
 using namespace std;
 
@@ -39,8 +41,8 @@ int main(int argc, char** argv){
     drawHistograma(histograma, imgH);
     imshow("imagem", im);
     imshow("Histograma", imgH);
-    imwrite(string("imagem") + to_string(i) + string(".png"), im);
-    imwrite(string("histograma") + to_string(i) + string(".png"), imgH);
+    imwrite(string(PATH_OUT/"imagem") + to_string(i) + string(".png"), im);
+    imwrite(string(PATH_OUT/"histograma") + to_string(i) + string(".png"), imgH);
 
     std::cout << "PSNR:"<< calcPSNR(imagens[0], im) << '\n';
 
