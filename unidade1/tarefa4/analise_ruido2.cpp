@@ -32,20 +32,15 @@ void filtro_media_alpha_cortada(const Mat src, Mat &dest, uint32_t m, uint32_t n
 
 int main(int argc, char** argv)
 {
-  Mat orig, imgH;
+  Mat orig;
+  Mat imgH;
+  Mat dest;
   String path("./segundoConjunto/*.jpg");
   std::vector<String> fn;
   std::vector<Mat> imagens;
   uint32_t histograma[I_MAX+1];
 
   glob(path, fn, true);
-  orig = imread(fn[0], CV_LOAD_IMAGE_GRAYSCALE);
-  if(!orig.data)
-  {
-    std::cerr << "Erro ao carregar a imagem original" << '\n';
-    return-1;
-  }
-
   // carrega as N imagens
   for(size_t i = 0; i < fn.size(); i++)
   {
@@ -53,14 +48,58 @@ int main(int argc, char** argv)
     if(!im.data)continue;//caso falhe na leitura, vai para o proximo arquivo
     imagens.push_back(im);
 
-    calcHistograma(im, histograma);
-    drawHistograma(histograma, imgH);
-    imshow("imagem", im);
-    imshow("Histograma", imgH);
-    imwrite(string("imagem") + to_string(i) + string(".png"), im);
-    imwrite(string("histograma") + to_string(i) + string(".png"), imgH);
-
+    std::cout << "******** Imagem:"<< i << "********\n";
+    // calcHistograma(im, histograma);
+    // drawHistograma(histograma, imgH);
+    imshow("Imagem", im);
+    // imshow("Histograma", imgH);
+    // imwrite(string("imagem") + to_string(i) + string(".png"), im);
+    // imwrite(string("histograma") + to_string(i) + string(".png"), imgH);
     std::cout << "RMSE:"<< calcRMSE(imagens[0], im) << '\n';
+
+    filtro_media(im, dest, 3, 3);
+    std::cout << "filtro_media RMSE:"<< calcRMSE(imagens[0], dest) << '\n';
+    imshow("Filtrada", dest);
+    waitKey(0);
+
+    filtro_media_geometrica(im, dest, 10, 10);
+    std::cout << "filtro_media_geometrica RMSE:"<< calcRMSE(imagens[0], dest) << '\n';
+    imshow("Filtrada", dest);
+    waitKey(0);
+
+    filtro_mediana(im, dest, 3, 3);
+    std::cout << "filtro_mediana RMSE:"<< calcRMSE(imagens[0], dest) << '\n';
+    imshow("Filtrada", dest);
+    waitKey(0);
+    //
+    filtro_max(im, dest, 3, 3);
+    std::cout << "filtro_max RMSE:"<< calcRMSE(imagens[0], dest) << '\n';
+    imshow("Filtrada", dest);
+    waitKey(0);
+    //
+    filtro_min(im, dest, 3, 3);
+    std::cout << "filtro_min RMSE:"<< calcRMSE(imagens[0], dest) << '\n';
+    imshow("Filtrada", dest);
+    waitKey(0);
+    //
+    filtro_ponto_medio(im, dest, 3, 3);
+    std::cout << "filtro_ponto_medio RMSE:"<< calcRMSE(imagens[0], dest) << '\n';
+    imshow("Filtrada", dest);
+    waitKey(0);
+    //
+    filtro_media_harmonca(im, dest, 10, 10);
+    std::cout << "filtro_media_harmonca RMSE:"<< calcRMSE(imagens[0], dest) << '\n';
+    imshow("Filtrada", dest);
+    waitKey(0);
+    //
+    filtro_media_contra_harmonca(im, dest, 3, 3, 2);
+    std::cout << "filtro_media_contra_harmonca RMSE:"<< calcRMSE(imagens[0], dest) << '\n';
+    imshow("Filtrada", dest);
+    waitKey(0);
+    //
+    filtro_media_alpha_cortada(im, dest, 3, 3, 2);
+    std::cout << "filtro_media_alpha_cortada RMSE:"<< calcRMSE(imagens[0], dest) << '\n';
+    imshow("Filtrada", dest);
     waitKey(0);
   }
 
@@ -137,23 +176,23 @@ void filtro_media_harmonca(const Mat src, Mat &dest, uint32_t m, uint32_t n)
     sum = 0.0;
     for(uint32_t t = (y - n/2); t < (y + n/2); t++)
       for(uint32_t s = (x - m/2); s < (x+m/2); s++)
-        sum+= 1.0/src.at<uint8_t>(t,s);
+        sum+= 1.0/(src.at<uint8_t>(t,s)+1.0);  //somo 1 para evitar div por zero
     dest.at<uint8_t>(y,x) = (m*n)/sum;
   }
 }
 void filtro_media_geometrica(const Mat src, Mat &dest, uint32_t m, uint32_t n)
 {
-  uint32_t mult = 1;
+  double mult = 1;
   dest = Mat::zeros(src.size(), CV_8U);
 
   for(uint32_t y = n/2; y < (src.rows - n/2); y++)
   for(uint32_t x = m/2; x < (src.cols - m/2); x++)
   {
-    mult = 1;
+    mult = 1.0;
     for(uint32_t t = (y - n/2); t < (y + n/2); t++)
       for(uint32_t s = (x - m/2); s < (x+m/2); s++)
-        mult*= (src.at<uint8_t>(t,s) == 0)?1:src.at<uint8_t>(t,s);
-    dest.at<uint8_t>(y,x) = (uint8_t)pow((double)mult, 1.0/(m*n));
+        mult*= (double)src.at<uint8_t>(t,s);
+    dest.at<uint8_t>(y,x) = (uint8_t)pow(mult, 1.0/(m*n));
   }
 }
 void filtro_mediana(const Mat src, Mat &dest, uint32_t m, uint32_t n)
@@ -278,7 +317,7 @@ void filtro_media_alpha_cortada(const Mat src, Mat &dest, uint32_t m, uint32_t n
     sum = 0;
     for(it = lista.begin(); it != lista.end(); it++)
     {
-      if((i > d/2) && i < (lista.size() - d/2))
+      if((i >= d/2) && i <= (lista.size() - d))
         sum+= *it;
       i++;
     }
