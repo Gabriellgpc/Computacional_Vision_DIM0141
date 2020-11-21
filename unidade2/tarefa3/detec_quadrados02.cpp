@@ -7,7 +7,7 @@
 using namespace cv;
 using namespace std;
 
-#define _DEBUG_LVL1_
+// #define _DEBUG_LVL1_
 
 static uint16_t min_number_votes = 2;
 static uint16_t max_number_votes = 1000;
@@ -239,15 +239,15 @@ std::list<MySquare> myHoughtTransform4Squares(const Mat &img, const int &max_det
             sq.xc() = (uint16_t)round(midle_p.x) % width;
             sq.yc() = (uint16_t)round(midle_p.y) % height;
 
+            vote_table[sq.xc()][sq.yc()][sq.isize()][sq.itheta()]++;
 #ifdef _DEBUG_LVL1_
             std::cout << "Centro = " << sq.center() << '\n';
             std::cout << "Size   = " << sq.size() << " l = " << sq.isize() << '\n';
             std::cout << "Theta  = " << sq.itheta() * ang_step * 180 / M_PI << " a = " << sq.itheta() << '\n';
             std::cout << "Recebeu Voto!\n";
-#endif
-            vote_table[sq.xc()][sq.yc()][sq.isize()][sq.itheta()]++;
             std::cout << "Quantidade de votos do candidato = " << vote_table[sq.xc()][sq.yc()][sq.isize()][sq.itheta()] << '\n';
             qtd_votos++;
+#endif
         }
 #ifdef _DEBUG_LVL1_
     std::cout << "Quantidade de votos no total = " << (int)qtd_votos << '\n';
