@@ -70,7 +70,7 @@ void selectiveFiltering(const cv::Mat &src, cv::Mat &dest, const float &edge_thr
     convFilter(src, dest, mask);
     dest.convertTo(dest, CV_8U);
     cv::imshow("Imagem suavizada levemente", dest);
-    cv::imwrite("leve_suavizacao.png", dest);
+    cv::imwrite("leve_suavizacao_q1.png", dest);
     /********************************/
     /*Calcular o gradiente da imagem*/
     /********************************/
@@ -107,7 +107,7 @@ void selectiveFiltering(const cv::Mat &src, cv::Mat &dest, const float &edge_thr
     blurImg.convertTo(blurImg, CV_8U);
     
     cv::imshow("Imagem Borrada", blurImg);
-    cv::imwrite("borrada.png", blurImg);
+    cv::imwrite("borrada_q1.png", blurImg);
     /*********************************************************/
     /*Sobrepor a imagem borrada sobre as regioes de não borda*/
     /*********************************************************/
